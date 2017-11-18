@@ -1,0 +1,35 @@
+FROM selenium/standalone-chrome:3.7.1-argon
+
+# Performs the following steps:
+# 1. Install DynamicIP CA Certificate (see: https://www.dynamicip.com/ssl)
+# 2. Install .NET Core v2
+# 3. Cleanup
+
+# We also add 'com.dynamicip.example.csproj' so we can warm-up the .NET dependency cache. 
+# Note: you can still update the '*.csproj' later without having to rebuild this
+# base image, as the derived image also receives the latest version of '*.csproj'
+# and will install any missing packages. However, remember the new dependencies will be
+# reinstalled each time the derived image is built, so you may eventually want to build
+# the base image again to reduce the build time of the derived image.
+
+ADD --chown=seluser:seluser com.dynamicip.example/com.dynamicip.example.csproj /opt/dynamicip/scraping-example/
+
+ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
+
+RUN cd /opt/dynamicip/scraping-example/ && \
+    sudo apt-get update && \
+    sudo apt-get install curl libnss3-tools apt-transport-https -y && \
+    curl -O https://downloads.dynamicip.com/ca.crt && \
+    mkdir -p /home/seluser/.pki/nssdb && \
+    chmod -R 0700 /home/seluser/.pki && \
+    certutil -d sql:/home/seluser/.pki/nssdb -N --empty-password && \
+    certutil -d sql:/home/seluser/.pki/nssdb -A -t "C,," -n "DynamicIP CA" -i ca.crt && \
+    curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg && \
+    sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg && \
+    sudo su -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-xenial-prod xenial main" > /etc/apt/sources.list.d/dotnetdev.list' && \
+    sudo apt-get update && \
+    sudo apt-get install dotnet-sdk-2.0.2 -y && \
+    dotnet restore && \
+    sudo apt-get purge curl libnss3-tools apt-transport-https -y && \
+    sudo rm -rf /var/lib/apt/lists/* && \
+    sudo rm /etc/apt/sources.list.d/dotnetdev.list

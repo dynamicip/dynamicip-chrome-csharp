@@ -1,0 +1,28 @@
+# OSX
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
+
+# .NET
+bin
+obj
+
+# IDEs
+.vscode
+
+# DynamicIP API Key (prevent checking-in secrets to GIT)
+.dynamicip_api_key
