@@ -42,7 +42,7 @@ namespace com.dynamicip.example
             var options = new ChromeOptions();
 
             // Configure Chrome to use DynamicIP as a proxy.
-            options.AddArgument("--proxy-server=https://dynamicip.dom:443");
+            options.AddArgument("--proxy-server=https://dynamicip.com:443");
 
             // Perform proxy authentication via a custom plugin (see 'scripts/chrome_extension' dir).
             options.AddArgument($"--load-extension={Path.Combine(Directory.GetCurrentDirectory(), "scripts", "chrome_extension")}");

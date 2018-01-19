@@ -1,4 +1,4 @@
-var proxyHost        = 'dynamicip.dom';
+var proxyHost        = 'dynamicip.com';
 var proxyCredentials = {
   authCredentials: {
     username: 'apikey',
